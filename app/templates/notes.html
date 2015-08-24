@@ -1,0 +1,32 @@
+{% raw %}
+<!DOCTYPE html>
+<html ng-app="sketch">
+  <head>
+    <meta charset="utf-8">
+    <title>HandNotes</title>
+    <link rel="stylesheet" href="/static/css/master.css" media="screen" title="no title" charset="utf-8">
+    <script src="/static/js/angular.js" charset="utf-8"></script>
+    <script src="/static/js/easeljs-0.8.1.min.js" charset="utf-8"></script>
+    <script src="/static/js/sketch.js" charset="utf-8"></script>
+    <script src="/static/js/controllers.js" charset="utf-8"></script>
+    <script src="/static/js/jquery-2.1.4.js" charset="utf-8"></script>
+  </head>
+  <body ng-controller="NotebookController">
+    <div ng-view class="container">
+      <div class="tools">
+        <button id="eraser" type="button" ng-click="setTool('eraser')">Eraser</button>
+        <button id="pen" type="button" ng-click="setTool('pen')">Pen</button>
+      </div>
+      <div id='sketch' class="mainpanel"></div>
+    </div>
+    <div  id="action">
+      <button id="save" type="button" ng-click="savePage(currentPage)">Save</button>
+      <button id="new" type="button" ng-click="newPage()">New</button>
+    </div>
+      <li ng-repeat="page in pages">
+        <p><a href="#" ng-click="loadPage(page.num)">{{ page.num }}</a></p>
+      </li>
+    </div>
+  </body>
+</html>
+{% endraw %}
