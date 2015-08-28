@@ -11,76 +11,95 @@ Sketch = function () {
   this.canvas.setAttribute('height', canvasHeight);
   this.canvas.setAttribute('id', 'canvas');
   canvasDiv.append(this.canvas);
-  if(typeof G_vmlCanvasManager != 'undefined') {
-    this.canvas = G_vmlCanvasManager.initElement(this.canvas);
-  }
+
+
+  // if(typeof G_vmlCanvasManager != 'undefined') {
+  //   this.canvas = G_vmlCanvasManager.initElement(this.canvas);
+  // }
   this.context = this.canvas.getContext("2d");
 
-  var clickX = new Array();
-  var clickY = new Array();
-  var clickDrag = new Array();
-  var paint;
+  var stage = new createjs.Stage(this.canvas);
+  this.stage = stage;
+	// this.stage.autoClear = false;
+	this.stage.enableDOMEvents(true);
+	createjs.Touch.enable(stage);
+	createjs.Ticker.setFPS(24);
 
-  function addClick (x, y, dragging) {
-    clickX.push(x);
-    clickY.push(y);
-    clickDrag.push(dragging);
-  }
-  this.addClick = addClick.bind(this);
+  drawingCanvas = stage.addChild(new createjs.Shape());
+  drawingCanvas.cache(0, 0, canvasWidth, canvasHeight);
 
-  $('#canvas').mousedown( function(e) {
-    var mouseX = e.pageX - this.offsetLeft;
-    var mouseY = e.pageY - this.offsetTop;
+  var color = "#df4b26", stroke = 2;
 
-    paint = true;
-    that.addClick(e.pageX - this.offsetLeft, e.pageY - this.offsetTop);
-    that.redraw();
+	stage.addEventListener("stagemousedown",
+    function(e) {
+      if (!e.primary) { return; }
+    	oldPt = new createjs.Point(stage.mouseX, stage.mouseY);
+    	oldMidPt = oldPt.clone();
+    	stage.addEventListener("stagemousemove", handleMouseMove);
   });
 
-  $('#canvas').mousemove( function(e) {
-    var mouseX = e.pageX - this.offsetLeft;
-    var mouseY = e.pageY - this.offsetTop;
+  var erase = false;
 
-    if (paint)
-      that.addClick(e.pageX - this.offsetLeft, e.pageY - this.offsetTop, true);
+  function handleMouseMove(event) {
+  	if (!event.primary) { return; }
+    	var midPt = new createjs.Point(oldPt.x + stage.mouseX >> 1, oldPt.y + stage.mouseY >> 1);
+      console.log(erase);
 
-    that.redraw();
-  });
+      drawingCanvas
+        .graphics
+        .clear()
+        .setStrokeStyle(stroke, 'round', 'round')
+        .beginStroke(color)
+        .moveTo(midPt.x, midPt.y)
+        .curveTo(oldPt.x, oldPt.y, oldMidPt.x, oldMidPt.y);
 
-  $('#canvas').mouseup( function (e) {
-    paint = false;
-  });
+      drawingCanvas.updateCache(erase ? "destination-out" : "source-over");
+      drawingCanvas.graphics.clear();
 
-  this.checkpoint = null;
+    	oldPt.x = stage.mouseX;
+    	oldPt.y = stage.mouseY;
 
-  this.redraw = function () {
-    this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height); // Clears the canvas
-    if (this.checkpoint != null) {
-      this.context.drawImage(this.checkpoint, 0, 0);
+    	oldMidPt.x = midPt.x;
+    	oldMidPt.y = midPt.y;
+
+      stage.update();
     }
 
-    this.context.strokeStyle = "#df4b26";
-    this.context.lineJoin = "round";
-    this.context.lineWidth = 2;
-    for(var i=0; i < clickX.length; i++) {
-      this.context.beginPath();
-      if(clickDrag[i] && i){
-        this.context.moveTo(clickX[i-1], clickY[i-1]);
-       }else{
-         this.context.moveTo(clickX[i]-1, clickY[i]);
-       }
-       this.context.lineTo(clickX[i], clickY[i]);
-       this.context.closePath();
-       this.context.stroke();
+
+    stage.addEventListener("stagemouseup",
+      function (event) {
+      	if (!event.primary) { return; }
+      	stage.removeEventListener("stagemousemove", handleMouseMove);
+      });
+
+  var backgroundBitmap = null;
+  this.setEraser = function(state) {
+    erase = state;
+    stroke = erase ? 20 : 2;
+  };
+
+  this.setBackgroundImage = function(image) {
+    if (image == null) {
+      drawingCanvas
+        .graphics
+        .clear()
+        .beginFill("rgba(0, 0, 0, 0)")
+        .drawRect(0, 0, canvasWidth, canvasHeight);
+
+      drawingCanvas.updateCache('copy');
+      stage.update();
     }
-  };
+    else {
+      drawingCanvas
+        .graphics
+        .clear()
+        .beginBitmapFill(image)
+        .drawRect(0, 0, canvasWidth, canvasHeight);
 
-  this.resetc = function () {
-    clickX = new Array();
-    clickY = new Array();
-    clickDrag = new Array();
+      drawingCanvas.updateCache('copy');
+      stage.update();
+    };
   };
-
 }
 
 function pngDataToImage(input) {

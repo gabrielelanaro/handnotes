@@ -13,19 +13,23 @@
   </head>
   <body ng-controller="NotebookController">
     <div ng-view class="container">
-      <div class="tools">
-        <button id="eraser" type="button" ng-click="setTool('eraser')">Eraser</button>
-        <button id="pen" type="button" ng-click="setTool('pen')">Pen</button>
+      <div id='sketch' class="mainpanel">
+        <div class="tools">
+          <button id="eraser" type="button" ng-click="setTool('eraser')">Eraser</button>
+          <button id="pen" type="button" ng-click="setTool('pen')">Pen</button>
+        </div>
       </div>
-      <div id='sketch' class="mainpanel"></div>
     </div>
     <div  id="action">
-      <button id="save" type="button" ng-click="savePage(currentPage)">Save</button>
+      <button id="save" type="button" ng-click="savePage(pages[currentPage])">Save</button>
       <button id="new" type="button" ng-click="newPage()">New</button>
+      <button id="delete" type="button" ng-click="deletePage(currentPage)">Delete</button>
     </div>
+    <ul id="page-list" >
       <li ng-repeat="page in pages">
-        <p><a href="#" ng-click="loadPage(page.num)">{{ page.num }}</a></p>
+        <a href="#" ng-click="loadPage($index)"><img ng-src="data:image/png;base64,{{page.thumb}}"/></a>
       </li>
+    </ul>
     </div>
   </body>
 </html>

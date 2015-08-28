@@ -1,0 +1,7 @@
+
+
+
+class Page:
+
+    filename = Text()
+    

@@ -1,4 +1,25 @@
 
+
 .mainpanel {
-  box-shadow: 10px 10px 5px #888888;
+  margin: 0 0 0 200px;
+}
+.mainpanel canvas {
+  box-shadow: 0px 0px 5px #888888;
+}
+
+.tools {
+  float: right;
+}
+
+#page-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+#page-list li {
+  display: inline;
+}
+#page-list img {
+  box-shadow: 2px 0px 2px #888888;
 }
