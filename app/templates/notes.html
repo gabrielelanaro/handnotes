@@ -8,11 +8,15 @@
     <script src="/static/js/angular.js" charset="utf-8"></script>
     <script src="/static/js/easeljs-0.8.1.min.js" charset="utf-8"></script>
     <script src="/static/js/sketch.js" charset="utf-8"></script>
+    <script src="/static/js/preview.js" charset="utf-8"></script>
     <script src="/static/js/controllers.js" charset="utf-8"></script>
     <script src="/static/js/jquery-2.1.4.js" charset="utf-8"></script>
   </head>
   <body ng-controller="NotebookController">
     <div ng-view class="container">
+      <div id='preview'>
+
+      </div>
       <div id='sketch' class="mainpanel">
         <div class="tools">
           <button id="eraser" type="button" ng-click="setTool('eraser')">Eraser</button>

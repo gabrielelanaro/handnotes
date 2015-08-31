@@ -20,6 +20,7 @@ sketch.controller('NotebookController', function ($scope, $timeout, $http, Noteb
   });
 
   var sketchCanvas = new Sketch();
+  var previewPanel = new Preview(sketchCanvas.width, sketchCanvas.height, 6);
 
   $scope.refreshThumbnails = function () {
     NotebookData.pages().then(function (response) {
@@ -30,10 +31,10 @@ sketch.controller('NotebookController', function ($scope, $timeout, $http, Noteb
   $scope.setTool = function(tool) {
     console.log('Set tool ' + tool);
     if (tool == "eraser") {
-      sketchCanvas.setEraser(true);
+      sketchCanvas.activateTool(Sketch.ERASER);
     }
     else {
-      sketchCanvas.setEraser(false);
+      sketchCanvas.activateTool(Sketch.PEN);
     }
   };
 
